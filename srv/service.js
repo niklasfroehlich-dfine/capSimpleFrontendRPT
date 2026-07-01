@@ -1,3 +1,5 @@
+const { executeHttpRequest } = require('@sap-cloud-sdk/http-client');
+
 module.exports = srv => {
   srv.on('ping', () => {
     return 'pong from CAP backend';
