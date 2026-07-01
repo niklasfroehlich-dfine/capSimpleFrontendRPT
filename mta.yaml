@@ -1,0 +1,64 @@
+_schema-version: 3.3.0
+ID: capSimpleFrontend
+version: 1.0.0
+description: "A simple RPT CAP project."
+parameters:
+  enable-parallel-deployments: true
+  
+build-parameters:
+  before-all:
+    - builder: custom
+      commands:
+        - npm ci
+        - npx cds build --production
+        - cp -r app gen/srv/app
+
+modules:
+  - name: capSimpleFrontend-RPT-srv
+    type: nodejs
+    path: gen/srv
+    parameters:
+      instances: 1
+      buildpack: nodejs_buildpack
+      memory: 512M
+    build-parameters:
+      builder: npm-ci
+    provides:
+      - name: srv-api # required by consumers of CAP services (e.g. approuter)
+        properties:
+          srv-url: ${default-url}
+    requires:
+      - name: rpt-hanadb-hdi
+      - name: rpt-cap-auth-xsuaa
+      - name: rpt-destination
+
+
+
+  - name: capSimpleFrontend-RPT-db-deployer
+    type: hdb
+    path: gen/db
+    parameters:
+      buildpack: nodejs_buildpack
+      memory: 256M
+    requires:
+      - name: rpt-hanadb-hdi
+
+resources:
+  - name: rpt-hanadb-hdi
+    type: com.sap.xs.hdi-container
+    parameters:
+      service: hana
+      service-plan: hdi-shared
+
+  - name: rpt-cap-auth-xsuaa
+    type: org.cloudfoundry.managed-service
+    parameters:
+      service: xsuaa
+      service-plan: application
+  
+  - name: rpt-destination
+    type: org.cloudfoundry.managed-service
+    parameters:
+      service: destination
+      service-plan: lite
+

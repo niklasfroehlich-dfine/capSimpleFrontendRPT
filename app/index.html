@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>CAP Frontend</title>
+</head>
+<body>
+  <h1>Hello CAP Frontend</h1>
+
+  <button onclick="showMessage()">Integration Suite triggern</button>
+
+  <p id="result"></p>
+
+  <script>
+    async function showMessage() {
+        const response = await fetch("/odata/v4/main/triggerIntegration()");
+        const data = await response.json();
+
+        document.getElementById("result").innerText = data.value;
+    }
+</script>
+</body>
+</html>
