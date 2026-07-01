@@ -14,9 +14,9 @@
   <script>
     async function showMessage() {
         const response = await fetch("/odata/v4/main/triggerIntegration()");
-        const data = await response.json();
+        const data = await response.json(); 
 
-        document.getElementById("result").innerText = data.value; 
+        document.getElementById("result").innerText = data.value;
     }
 </script>
 </body>
